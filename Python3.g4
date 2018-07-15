@@ -155,12 +155,57 @@ varargslist: (vfpdef ('=' test)? (',' vfpdef ('=' test)?)* (',' (
 );
 vfpdef: NAME;
 
-stmt: simple_stmt | compound_stmt;
+stmt: simple_stmt | compound_stmt | general_stmt;
 simple_stmt: small_stmt (';' small_stmt)* (';')? NEWLINE;
 small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
              import_stmt | global_stmt | nonlocal_stmt | assert_stmt);
 expr_stmt: testlist_star_expr (annassign | augassign (yield_expr|testlist) |
                      expr_assignment*);
+/*
+ *eg. Type T = int
+ */                     
+//type definition
+general_stmt: def_stmt | variable_decl_stmt;
+def_stmt: type type_id '=' type_def;
+type_def: basic_type_name | comp_type_def | any_type_def;
+basic_type_name: int_type_name | float_type_name
+                         | complex_type_name 
+                         | bool_type_name;
+any_type_def: 'any';
+int_type_name: 'int' ;
+float_type_name: 'float';
+complex_type_name: 'complex';
+bool_type_name: 'bool';
+comp_type_def: list_type_def | set_type_def |
+                          tuple_type_def | dict_type_def |
+                          str_type_def;
+list_type_def: list | (list 'of' type_def);
+set_type_def: set | (set 'of' type_def);
+tuple_type_def: tuple | (tuple 'of' type_def);
+str_type_def: 'str';
+dict_type_def: dict '{'
+                                key_def ':' 
+                                value_def
+                               '}';
+list: 'list';
+set: 'set';
+tuple: 'tuple';
+dict: 'dict';
+type: 'Type';
+key_def: NAME ':' type_name;
+value_def: component_def_list;
+component_def_list: component_def | component_def_list;
+component_def: id_list ':' type_name;
+type_name: NAME;
+id_list: NAME(',' NAME)*;
+/*
+ * eg. Var variable:T
+ */
+//variable declaration;
+variable_decl_stmt: var id_list ':' type_name;
+var: 'Var';
+                     
+                     
 expr_assignment: '=' (yield_expr|testlist_star_expr);                      
 annassign: ':' test ('=' test)?;
 testlist_star_expr: (test|star_expr) (',' (test|star_expr))* (',')?;
@@ -327,6 +372,10 @@ CONTINUE : 'continue';
 BREAK : 'break';
 ASYNC : 'async';
 AWAIT : 'await';
+//Type definition
+TYPE : 'Type'
+//variable declaration
+VAR : 'Var'
 
 NEWLINE
  : ( {atStartOfInput()}?   SPACES
