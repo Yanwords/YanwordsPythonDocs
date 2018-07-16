@@ -179,9 +179,14 @@ bool_type_name: 'bool';
 comp_type_def: list_type_def | set_type_def |
                           tuple_type_def | dict_type_def |
                           str_type_def;
-list_type_def: list | (list 'of' type_def);
-set_type_def: set | (set 'of' type_def);
-tuple_type_def: tuple | (tuple 'of' type_def);
+                          
+ /*
+  *eg. list of T
+  */                         
+                          
+list_type_def: list | (list OF type_def);
+set_type_def: set | (set OF type_def);
+tuple_type_def: tuple | (tuple OF type_def);
 str_type_def: 'str';
 dict_type_def: dict '{'
                                 key_def ':' 
@@ -191,7 +196,6 @@ list: 'list';
 set: 'set';
 tuple: 'tuple';
 dict: 'dict';
-type: 'Type';
 key_def: NAME ':' type_name;
 value_def: component_def_list;
 component_def_list: component_def | component_def_list;
@@ -202,8 +206,7 @@ id_list: NAME(',' NAME)*;
  * eg. Var variable:T
  */
 //variable declaration;
-variable_decl_stmt: var id_list ':' type_name;
-var: 'Var';
+variable_decl_stmt: Var id_list ':' type_name;
                      
                      
 expr_assignment: '=' (yield_expr|testlist_star_expr);                      
@@ -374,6 +377,7 @@ ASYNC : 'async';
 AWAIT : 'await';
 //Type definition
 TYPE : 'Type'
+OF : 'of'
 //variable declaration
 VAR : 'Var'
 
